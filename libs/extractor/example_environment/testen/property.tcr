@@ -1,0 +1,5 @@
+property {{name}} : {{type}}? = {{def_val}}
+
+def {{name}}
+    @{{name}}.not_nil!
+end

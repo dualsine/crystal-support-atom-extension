@@ -1,0 +1,200 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+// @font-face {
+// 	font-family: 'Material Icons';
+// 	font-style: normal;
+// 	font-weight: 400;
+// 	src: local('Material Icons'), local('MaterialIcons-Regular'), url(public/material-design-icons/iconfont/MaterialIcons-Regular.woff2) format('woff2'), url(public/material-design-icons/iconfont/MaterialIcons-Regular.woff) format('woff'), url(public/material-design-icons/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+// 	src: url(public/material-design-icons/iconfont/MaterialIcons-Regular.eot);
+// }
+
+#crystal-support-atom-extension-right-panel-expander {
+		width: 4px;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: -2px;
+		opacity: 0;
+		display: block;
+		background: #dcdcdc;
+		&:hover {
+			opacity: 1;
+		}
+}
+
+#crystal-support-atom-extension-right-panel {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: stretch;
+
+	legend {
+		border-bottom: none;
+	}
+
+  .top {
+    text-align: center;
+    cursor: default;
+		margin-bottom: 20px;
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+  }
+
+	.loading {
+		position: absolute;
+		opacity: 0;
+		top: 10px;
+		left: 10px;
+
+		&.show {
+			opacity: 1;
+		}
+	}
+
+	.error-msg {
+		position: absolute;
+    background: black;
+    padding: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    right: 0px;
+    width: 100%;
+	}
+
+  .content {
+		display: flex;
+		flex: 2;
+
+		.btn {
+			line-height: 32px;
+			margin-top: 8px;
+		}
+
+		.macro-editor {
+			width: 100%;
+			height: 100%;
+	    max-height: 75%;
+			overflow-y: scroll;
+			overflow-x: hidden;
+			atom-text-editor {
+				height: 100%;
+			}
+		}
+
+    p {
+      margin: 0;
+    }
+		& > .inset-panel{
+			display: flex;
+			width: 100%;
+			height: 100%;
+
+			& > div {
+				flex-direction: column;
+				display: flex;
+				flex-basis: 100%;
+				height: 100%;
+				width: 100%;
+
+				.api-filter-pages {
+					min-height: 55px;
+					.icon-container {
+						pointer-events: none;
+					}
+				}
+
+				.api-menu {
+					overflow-x: hidden;
+					overflow-y: scroll;
+
+					& .list-item {
+						display: inline-block;
+						span {
+							font-size: 15px;
+						}
+					}
+					& .list-item:hover span {
+						display: inline-block;
+						cursor: pointer;
+						text-decoration: underline;
+					}
+				}
+				.api-paper {
+					display: flex;
+					overflow-y: scroll;
+					overflow-x: hidden;
+					flex: 2;
+					& > div {
+						max-width: 100%;
+						.main-content {
+							color: #acacac;
+						}
+					}
+					.entry-detail {
+						margin-bottom: 31px;
+						& > br {
+							display: none;
+						}
+					}
+					.entry-const-doc {
+						pre {
+							margin-top: 10px;
+							margin-bottom: 10px;
+						}
+					}
+					pre, code {
+						background: #333333;
+				    color: #dcdcdc;
+				    font-size: 14px;
+					}
+					pre > code {
+						white-space: pre;
+					}
+					.methods-inherited {
+						code {
+							clear: both;
+							float: left;
+						}
+						a {
+							display: inline-block;
+							opacity: 1;
+							color: #dcdcdc;
+							position: relative;
+							& span {
+								display: none;
+							}
+						}
+					}
+				}
+			}
+		}
+  }
+	& > .compress {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		z-index: 100;
+		line-height: 20px;
+		font-size: 12px;
+	}
+	button.refresh-api,
+	button.show-menu {
+		right: 0;
+		position: absolute;
+		z-index: 100;
+		top: -32px;
+	}
+}
+
+#crystal-support-atom-extension-status-bar {
+  padding: 0 10px;
+}

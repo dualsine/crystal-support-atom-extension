@@ -1,0 +1,22 @@
+# See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
+'context-menu':
+  'atom-text-editor': [
+    {
+      'label': 'Toggle crystal-support-atom-extension'
+      'command': 'crystal-support-atom-extension:toggle'
+    }
+  ]
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'crystal-support-atom-extension'
+      'submenu': [
+        {
+          'label': 'Toggle'
+          'command': 'crystal-support-atom-extension:toggle'
+        }
+      ]
+    ]
+  }
+]

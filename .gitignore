@@ -1,0 +1,9 @@
+.DS_Store
+npm-debug.log
+node_modules
+dist
+api-db.json
+crystal-api
+.c-s-a-extension
+libs/extractor/.build
+libs/extractor/crystal_extractor
