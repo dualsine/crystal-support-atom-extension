@@ -6,4 +6,5 @@ api-db.json
 crystal-api
 .c-s-a-extension
 libs/extractor/.build
+libs/extractor/crystal
 libs/extractor/crystal_extractor

@@ -6,7 +6,6 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 Top = require './top'
 Content = require './content'
-Error = require './error'
 Expander = require './expander'
 
 module.exports =
@@ -30,7 +29,6 @@ observer class RightPanel extends React.Component
 
     <div id="crystal-support-atom-extension-right-panel" style={{width: @props.store.rightPanelWidth}} className={"panel-active-"+@props.store.active.toString()}>
       <Expander store={@props.store} />
-      <Error store={@props.store} />
       <CircularProgress className={loadingClass} />
       <Top store={@props.store} />
       <Content store={@props.store} />

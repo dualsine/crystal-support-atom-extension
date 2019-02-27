@@ -5,6 +5,8 @@ mobx = require 'mobx'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
+
+
 module.exports =
 observer class Menu extends React.Component
   constructor: (props) ->
@@ -13,6 +15,7 @@ observer class Menu extends React.Component
 
   menuClick: (page) =>
     if page != @props.store.activePage
+      @props.store.removeOneError()
       @props.store.setActivePage page
 
   render: =>
@@ -30,6 +33,7 @@ observer class Menu extends React.Component
         for page, idx in @props.store.pages
           <Tab
             key={idx}
+            style={{minWidth: 125, width: 125}}
             className={ if @props.store.activePage == page then "selected" else "" }
             label={page.title}
             onClick={@menuClick.bind(@, page)}

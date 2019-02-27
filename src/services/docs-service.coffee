@@ -26,6 +26,8 @@ class DocsService
 
     @dbPath = path.resolve(@store.dirInAtom, 'api-db.json')
 
+    document.addEventListener 'mousedown', @openLink
+
     @openDb()
     unless this.db.get('links').value()
       @clearDb()
@@ -33,6 +35,13 @@ class DocsService
     @loadLinksFromDb()
 
     @getVersion()
+
+  openLink: (ev) =>
+    if ev.target.getAttribute('data-crystal-support-atom-extension') == 'document-link'
+      lineOffset = ev.target.getAttribute('data-column')
+      href = ev.target.getAttribute('href')
+      atom.workspace.open(href, {initialLine: lineOffset-1, initialColumn: 0}).then (editor) =>
+        editor.getElement().focus()
 
   loadLinksFromDb: ->
     @apiLinks = @db.get('links').value()

@@ -2,7 +2,7 @@ React = require 'react'
 mobx = require 'mobx'
 {observer} = require 'mobx-react'
 
-TextInput = require '../../ui/text-input'
+ConfigPoint = require '../../misc/config-point'
 
 module.exports =
 observer class SettingsPage extends React.Component
@@ -13,11 +13,7 @@ observer class SettingsPage extends React.Component
 
   render: ->
     <div>
-      <TextInput
-        disabled={true}
-        label="Current workspace config location"
-        value={@props.store.normalizedConfigPath}
-        />
+      <ConfigPoint store={@props.store} />
       <button className="btn" onClick={(ev) => @props.store.docsService.refresh(ev)}>
         Refresh Api (download new checkout from github)
       </button>

@@ -19,6 +19,7 @@ class MacrosService
   constructor: (store) ->
     @store = store
 
+    @active = false
     @processing = false
 
     @expandEntireFile = false
@@ -29,11 +30,15 @@ class MacrosService
     atom.textEditors.setGrammarOverride(@editor, @store.crystalGrammar.scopeName)
 
     mobx.observe @store, "initialized", =>
-      @processMacro()
+      @process()
+
+  switchActive: =>
+    @active = !@active
+    @process()
 
   switchExpandEntireFile: =>
     @expandEntireFile = !@expandEntireFile
-    @processMacro()
+    @process()
 
   getEditorElement: ->
     atom.views.getView(@editor)
@@ -51,8 +56,10 @@ class MacrosService
     }`
     false
 
-  processMacro: ->
-    return if @processing
+  process: ->
+    return if @processing || !@active
+
+    @store.removeOneError()
 
     @processing = true
     @store.loadingOn()
@@ -67,20 +74,24 @@ class MacrosService
         @processing = false
 
         if err
-          errorResponse = JSON.parse(stderr)
-          @store.addError "Failed to expand macro", errorResponse.error, "Crystal Macro Expander - #{errorResponse.errorClass}"
+          try
+            errorResponse = JSON.parse(stderr)
+            [oneline, rest] = @wrapErrorsAndSplit(errorResponse.error)
+
+            @store.addError oneline, rest, "Crystal Macro Expander#{if errorResponse.errorClass then " - #{errorResponse.errorClass}" else ""}"
+          catch JSerror
+            @store.addError JSerror, stderr, "Crystal Macro Expander"
+
         else
-          console.log stdout
           response = JSON.parse(stdout)
 
           allExpressions = response["nodes"]
-          console.log allExpressions
+
           if @expandEntireFile
             @expandedCode = fs.readFileSync(@store.crystalSelectedPath).toString()
             codeSplitted = @expandedCode.split("\n")
 
             for expression in allExpressions.reverse()
-              # if expression.typeOfNode == "normal"
               if (typeof expression.expandedSource != 'undefined')
                 locationSplitted = expression.location.split(':')
                 startLine = locationSplitted[1]-1
@@ -97,6 +108,7 @@ class MacrosService
                   (endPos = chars + endColumn + 1) if idx == endLine
 
                   chars += line.length+1
+
                 # reindent
                 newExpandedSource = ""
                 indent = null
@@ -107,17 +119,7 @@ class MacrosService
                     newExpandedSource += "\n#{" ".repeat(indent)}#{line}"
 
                 @expandedCode = @expandedCode.substr(0, startPos) + newExpandedSource + @expandedCode.substr(endPos)
-                # @expandedCode = @expandedCode.expression.expandedSource
 
-              # else
-                # @expandedCode += expression.source
-              # else if expression.typeOfNode == "compiler"
-                # @expandedCode += expression.expandedSource
-
-            #   if (typeof expression.expandedSource != 'undefined')
-            #     @expandedCode += expression.expandedSource
-            #   else
-            #     @expandedCode += expression.
           else
             @expandedCode = "no macro found"
 
@@ -133,11 +135,27 @@ class MacrosService
 
           @oldExpandedCode = @expandedCode
       ) # end exec
+
     else
       @store.loadingOff()
       @processing = false
 
+  wrapErrorsAndSplit: (text) ->
+    rest = []
+    for line, idx in text.split("\n")
+      if singleFileOccurrence = line.match(/(in )([\w\./]+)(:)(\d+):/)
+        filePath = singleFileOccurrence[2]
+        characterOffset = singleFileOccurrence[4]
+        line = line.replace("#{filePath}:#{characterOffset}:", "<a href=\"#{path.join(path.dirname(@store.crystalEntryPath), filePath)}\" data-crystal-support-atom-extension=\"document-link\" data-column=\"#{characterOffset}\">#{filePath}:#{characterOffset}:</a>")
+      if idx == 0
+        oneline = line
+      else
+        rest += "\n#{line}"
+    [oneline, rest]
+
 mobx.decorate MacrosService,
   expandEntireFile: mobx.observable
+  active: mobx.observable
 
   switchExpandEntireFile: mobx.action
+  switchActive: mobx.action

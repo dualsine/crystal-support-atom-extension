@@ -50,7 +50,7 @@ observer class CrystalDocsPage extends React.Component
         if @activeMenu || @props.store.loading
           <React.Fragment>
             <TextInput
-              className="api-filter-pages"
+              className="docs-filter-pages"
               disabled={false}
               label={@props.store.docsService.getVersion()}
               icon={SearchIcon}
@@ -58,7 +58,7 @@ observer class CrystalDocsPage extends React.Component
               onChange={@filterApi.bind(@)}
               />
             {if @props.store.docsService.apiLinks
-              <ul className='list-tree api-menu'>
+              <ul className='list-tree docs-menu'>
                   {
                     for link, idx in @props.store.docsService.apiLinks
                       if link.title.toLowerCase().indexOf(@filter.toLowerCase()) > -1
@@ -86,7 +86,7 @@ observer class CrystalDocsPage extends React.Component
               <MenuIcon />
               Go back
             </Fab>
-            <StyledPaper className="api-paper" content={@content} />
+            <StyledPaper className="docs-paper" content={@content} />
           </React.Fragment>
       }
     </div>

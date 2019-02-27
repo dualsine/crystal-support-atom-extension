@@ -19,7 +19,7 @@ class TextInputUnstyled extends React.Component
       multiline={if @props.multiline then @props.multiline else false}
       id="standard-name"
       label={@props.label}
-      className={"#{@props.className} native-key-bindings"}
+      className={"#{@props.className} native-key-bindings crystal-support-atom-extension-color-text-1"}
       disabled={@props.disabled}
       value={@props.value}
       margin="normal"

@@ -5,10 +5,12 @@ fs = require 'fs'
 
 DocsService = require '../services/docs-service'
 MacrosService = require '../services/macros-service'
+LiveService = require '../services/live-service'
 
 MacroExpanderPage = require '../components/right-panel/pages/macro-expander-page'
 SettingsPage = require '../components/right-panel/pages/settings-page'
 CrystalDocsPage = require '../components/right-panel/pages/crystal-docs-page'
+LivePage = require '../components/right-panel/pages/live-page'
 
 module.exports =
 class MultiStore
@@ -25,7 +27,7 @@ class MultiStore
     @crystalActiveFileRow = null
     @crystalActiveFileColumn = null
 
-    @pages = [ MacroExpanderPage, CrystalDocsPage, SettingsPage ]
+    @pages = [ MacroExpanderPage, LivePage, CrystalDocsPage, SettingsPage ]
     @activePage = MacroExpanderPage
 
     @dirInAtom = atom.packages.resolvePackagePath('crystal-support-atom-extension')
@@ -38,6 +40,7 @@ class MultiStore
 
     @docsService = new DocsService(@)
     @macrosService = new MacrosService(@)
+    @liveService = new LiveService(@)
 
     @baseRightPanelWidth = 500
     @rightPanelWidth = @baseRightPanelWidth
@@ -65,7 +68,13 @@ class MultiStore
       type: type
 
   removeOneError: ->
-    @errors.shift()
+    err = @errors.shift()
+    if err
+      @lastError = err
+
+  showLastError: =>
+    # debugger
+    @errors.push @lastError
 
   selectApiPage: (href) =>
     @selectedApiPage = href
@@ -81,19 +90,26 @@ class MultiStore
 
 ################################################ WORKSPACE
   setCrystalEntryPath: ->
-    editor = atom.workspace.getActivePaneItem()
-    if editor
-      @crystalEntryPath = editor.buffer.file.path
-      @saveWorkspaceConfig()
-
+    editor = atom.workspace.getActiveTextEditor()
+    if editor && editor.buffer
+      tempPath = editor.buffer.file.path
+      if path.extname(tempPath) == '.cr'
+        @crystalEntryPath = tempPath
+        @saveWorkspaceConfig()
+      else
+        @addError 'Wrong file selected', 'Selected file not have .cr extension', "Crystal Support Atom Extension"
   setCrystalSelectedPath: ->
-    editor = atom.workspace.getActivePaneItem()
-    if editor
-      @crystalSelectedPath = editor.buffer.file.path
-      cursor = atom.workspace.getActiveTextEditor().getCursorBufferPosition()
-      @crystalActiveFileRow = cursor.row+1
-      @crystalActiveFileColumn = cursor.column+1
-      @saveWorkspaceConfig()
+    editor = atom.workspace.getActiveTextEditor()#atom.workspace.getActivePaneItem()
+    if editor && editor.buffer
+      tempPath = editor.buffer.file.path
+      if path.extname(tempPath) == '.cr'
+        @crystalSelectedPath = tempPath
+        cursor = atom.workspace.getActiveTextEditor().getCursorBufferPosition()
+        @crystalActiveFileRow = cursor.row+1
+        @crystalActiveFileColumn = cursor.column+1
+        @saveWorkspaceConfig()
+      else
+        @addError 'Wrong file selected', 'Selected file not have .cr extension', "Crystal Support Atom Extension"
 
   loadWorkspaceConfig: ->
     if fs.existsSync @normalizedConfigPath
@@ -101,9 +117,17 @@ class MultiStore
       if workspaceConfig
         workspaceConfig = JSON.parse(workspaceConfig)
         @crystalEntryPath = workspaceConfig.crystalEntryPath
+        unless fs.existsSync(@crystalEntryPath)
+          @crystalEntryPath = null
+
         @crystalSelectedPath = workspaceConfig.crystalSelectedPath
-        @crystalActiveFileRow = workspaceConfig.crystalActiveFileRow
-        @crystalActiveFileColumn = workspaceConfig.crystalActiveFileColumn
+        if fs.existsSync(@crystalSelectedPath)
+          @crystalActiveFileRow = workspaceConfig.crystalActiveFileRow
+          @crystalActiveFileColumn = workspaceConfig.crystalActiveFileColumn
+        else
+          @crystalSelectedPath = null
+          @crystalActiveFileRow = null
+          @crystalActiveFileColumn = null
 
   saveWorkspaceConfig: ->
     config = JSON.stringify(
@@ -134,6 +158,7 @@ mobx.decorate MultiStore,
   apiLinks: mobx.observable
   loading: mobx.observable
   errors: mobx.observable
+  lastError: mobx.observable
   crystalEntryPath: mobx.observable
   crystalSelectedPath: mobx.observable
   workspacePath: mobx.observable
@@ -149,9 +174,11 @@ mobx.decorate MultiStore,
   loadingOff: mobx.action
   addError: mobx.action
   removeOneError: mobx.action
+  showLastError: mobx.action
   setCrystalEntryPath: mobx.action
   setCrystalSelectedPath: mobx.action
   loadWorkspaceConfig: mobx.action
   setRightPanelWidth: mobx.action
   forceRerender: mobx.action
   setInitialized: mobx.action
+  createConfigPath: mobx.action

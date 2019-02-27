@@ -26,6 +26,7 @@ theme = createMuiTheme(
   #   MuiInputLabel:
   #
   typography:
-    fontSize: 14,
+    useNextVariants: true
+    fontSize: 14
     htmlFontSize: 14
 )

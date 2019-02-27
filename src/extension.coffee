@@ -12,15 +12,27 @@ theme = require('./theme')
 MultiStore = require './stores/multi-store'
 
 MacroExpanderPage = require './components/right-panel/pages/macro-expander-page'
+LivePage = require './components/right-panel/pages/live-page'
 
+Error = require './components/misc/error'
 RightPanel = require './components/right-panel/right-panel'
 StatusBar = require './components/status-bar/status-bar'
 
 module.exports = CrystalSupportAtomExtension =
   activate: (state) ->
-    console.log 'activate called'
+    console.log 'activated'
     @multiStore = new MultiStore
 
+    # ERROR MESSAGES COMPONENT
+    errorElement = document.createElement('div')
+    document.body.appendChild(errorElement)
+    ReactDOM.render(
+      <MuiThemeProvider theme={theme}>
+        <Error store={@multiStore} />
+      </MuiThemeProvider>
+    , errorElement)
+
+    # RIGHTPANEL COMPONENT
     ReactDOM.render(
       <MuiThemeProvider theme={theme}>
         <RightPanel store={@multiStore} />
@@ -34,6 +46,10 @@ module.exports = CrystalSupportAtomExtension =
 
     this.subscriptions.add atom.workspace.observeTextEditors (textEditor) =>
       this.subscriptions.add textEditor.onDidSave () => @onSave(textEditor)
+
+    atom.workspace.onDidOpen (ev) =>
+      console.log 'open'
+      @multiStore.initWorkspace()
 
     @multiStore.setInitialized()
 
@@ -68,20 +84,16 @@ module.exports = CrystalSupportAtomExtension =
       , StatusBar.element)
 
   onSave: (textEditor) ->
-    extension = null
-    editor = atom.workspace.getActivePaneItem()
-    if editor
-      extension = path.extname(editor.buffer.file.path)
+    fileExtension = null
+    editor = atom.workspace.getActiveTextEditor()
+    if editor && editor.buffer
+      fileExtension = path.extname(editor.buffer.file.path)
 
-    if @multiStore.activePage == MacroExpanderPage && extension == 'cr'
-      @multiStore.macrosService.processMacro()
+    if @multiStore.activePage == MacroExpanderPage && fileExtension == '.cr'
+      @multiStore.macrosService.process()
 
-    if atom.inDevMode() && extension == 'less'
+    if @multiStore.activePage == LivePage && fileExtension == '.cr'
+      @multiStore.liveService.process()
+
+    if atom.inDevMode() && fileExtension == '.less'
       atom.commands.dispatch(atom.views.getView(atom.workspace), 'dev-live-reload:reload-all')
-
-    # if atom.inDevMode() # auto reload less file
-    #   editor = atom.workspace.getActivePaneItem()
-    #   if editor
-    #     extension = path.extname(editor.buffer.file.path)
-    #     if extension == 'less'
-    #       atom.commands.dispatch(atom.views.getView(atom.workspace), 'dev-live-reload:reload-all')
