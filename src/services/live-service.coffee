@@ -24,14 +24,16 @@ class LiveService
     @active = false
     @processing = false
 
-    # Terminal.applyAddon(fit)
-    # @term = new Terminal()
-
     @content = ""
+
+  setActive: (bool) ->
+    @active = bool
 
   switchActive: ->
     @active = !@active
     @process() if @active
+
+    @store.saveWorkspaceConfig()
 
   process: ->
     return if @processing || !@active
@@ -57,12 +59,51 @@ class LiveService
 
   replaceContent: (newContent) ->
     # console.log 'new content', newContent
-    @content = newContent
+
+    @content = @escapeColors(newContent)
     # @term.reset()
     # @term.write(newContent)
+
+  escapeColors: (content) ->
+    return content if content.length > 40960
+
+    newContent = ""
+    content = content.split /\x1B\[([\d]+);?[\d]?m/g
+    for part in content
+      if part.length < 3
+        number = parseInt(part)
+        if number >= 0
+          newContent += @getColorAttribute(number)
+      else
+        newContent += part
+    newContent
+
+  getColorAttribute: (color) ->
+    normalizedColor = 'inherited'
+    if color == 0
+      return '</span>' # reset color attribute
+    else if color == 30
+      normalizedColor = 'black'
+    else if color == 31
+      normalizedColor = 'red'
+    else if color == 32
+      normalizedColor = 'green'
+    else if color == 33
+      normalizedColor = 'yellow'
+    else if color == 34
+      normalizedColor = 'blue'
+    else if color == 35
+      normalizedColor = 'magenta'
+    else if color == 36
+      normalizedColor = 'cyan'
+    else if color == 37
+      normalizedColor = '#D3D3D3'
+
+    "<span style=\"color: #{normalizedColor};\">"
 
 mobx.decorate LiveService,
   active: mobx.observable
   content: mobx.observable
   switchActive: mobx.action
   replaceContent: mobx.action
+  setActive: mobx.action

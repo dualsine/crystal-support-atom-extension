@@ -20,7 +20,7 @@
 #
 require 'fileutils'
 
-guard :shell do
+guard :shell, all_after_pass: false do
   watch(/src\/(.*).(coffee|cjsx)/) do |files|
     destination_dir = File.dirname(files[0]).sub("src","dist")
     FileUtils.mkdir_p destination_dir

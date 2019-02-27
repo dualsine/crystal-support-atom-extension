@@ -2,6 +2,8 @@ React = require 'react'
 mobx = require 'mobx'
 {observer} = require 'mobx-react'
 
+ReactHtmlParser = require('react-html-parser').default
+
 EntryPoint = require '../../misc/entry-point'
 
 import Switch from '@material-ui/core/Switch'
@@ -14,22 +16,16 @@ observer class LivePage extends React.Component
     super(props)
     @props = props
 
-    # mobx.observe @props.store, 'forceRerenderers', =>
-    #   @props.store.liveService.term.fit()
-
   componentDidMount: ->
-    # @props.store.liveService.term.open(document.getElementById('crystal-support-atom-extension-terminal'))
-    # @props.store.liveService.term.fit()
     if @props.store.liveService.active
       @props.store.liveService.process()
 
   render: ->
-    console.log 'live page render', @props.store.liveService.content
     <div>
       <div id="crystal-support-atom-extension-terminal">
-        <pre>
-          {@props.store.liveService.content}
-        </pre>
+        <div className="pre native-key-bindings" tabIndex="1">
+          { ReactHtmlParser(@props.store.liveService.content) }
+        </div>
       </div>
 
       <EntryPoint store={@props.store} />

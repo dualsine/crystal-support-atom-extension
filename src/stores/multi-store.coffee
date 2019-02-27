@@ -56,10 +56,10 @@ class MultiStore
     @activePage = newPage
 
   loadingOn: ->
-    @loading = true
+    document.querySelector('#crystal-support-atom-extension-right-panel .loading').classList.add('show')
 
   loadingOff: ->
-    @loading = false
+    document.querySelector('#crystal-support-atom-extension-right-panel .loading').classList.remove('show')
 
   addError: (title, content, type) ->
     @errors.push
@@ -129,12 +129,23 @@ class MultiStore
           @crystalActiveFileRow = null
           @crystalActiveFileColumn = null
 
+        if typeof workspaceConfig.liveServiceActive == 'boolean'
+          @liveService.setActive workspaceConfig.liveServiceActive
+        if typeof workspaceConfig.macrosServiceActive == 'boolean'
+          @macrosService.setActive workspaceConfig.macrosServiceActive
+        if workspaceConfig.activePage
+          @setActivePage @pages[workspaceConfig.activePage]
+
+
   saveWorkspaceConfig: ->
     config = JSON.stringify(
       crystalEntryPath: @crystalEntryPath
       crystalSelectedPath: @crystalSelectedPath
       crystalActiveFileRow: @crystalActiveFileRow
       crystalActiveFileColumn: @crystalActiveFileColumn
+      liveServiceActive: @liveService.active
+      macrosServiceActive: @macrosService.active
+      activePage: @pages.indexOf(@activePage)
     )
     fs.writeFileSync @normalizedConfigPath, config
 
@@ -156,7 +167,6 @@ mobx.decorate MultiStore,
   pages: mobx.observable
   activePage: mobx.observable
   apiLinks: mobx.observable
-  loading: mobx.observable
   errors: mobx.observable
   lastError: mobx.observable
   crystalEntryPath: mobx.observable
@@ -170,8 +180,6 @@ mobx.decorate MultiStore,
 
   switchActive: mobx.action # switch extension on/off
   setActivePage: mobx.action
-  loadingOn: mobx.action
-  loadingOff: mobx.action
   addError: mobx.action
   removeOneError: mobx.action
   showLastError: mobx.action

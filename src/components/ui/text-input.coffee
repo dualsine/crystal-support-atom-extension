@@ -26,8 +26,10 @@ class TextInputUnstyled extends React.Component
       variant="outlined"
       placeholder={@props.placeholder}
       onChange={if @props.onChange then @props.onChange else null}
+      onKeyPress={if @props.onKeyPress then @props.onKeyPress else null}
       InputLabelProps={{ shrink: true }}
       InputProps={@props.InputProps}
+      tabIndex="0"
       InputProps={
         if Icon
           endAdornment: (

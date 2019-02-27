@@ -51,7 +51,15 @@ class DocsService
     @db = low @dbAdapter
     @db.read()
 
-  refresh: ->
+  filterMethods: (text) ->
+    if @lastPageDom
+      entries = ""
+      for entry in @lastPageDom.window.document.querySelectorAll('.entry-detail')
+        if entry.textContent.toLowerCase().indexOf(text.toLowerCase()) > -1
+          entries += entry.outerHTML
+      entries
+
+  refresh: -> # refresh all docs
     return if @store.loading
 
     @store.loadingOn()
@@ -71,12 +79,6 @@ class DocsService
           else
             body = fs.readFileSync path.resolve(@apiPath, "docs", "String.html")
             body = body.toString()
-            # version = "---------"
-            # currentDate = new Date()
-            # day = currentDate.getDate()
-            # month = currentDate.getMonth()+1
-            # year = currentDate.getFullYear()
-            # updated = "(#{year}-#{month}-#{day})"
 
             dom = new JSDOM(body)
 
@@ -128,7 +130,13 @@ class DocsService
 
     dom = new JSDOM(body)
     main_content_css = '.main-content'
-    dom.window.document.querySelector(main_content_css).outerHTML
+    @lastPage = dom.window.document.querySelector(main_content_css).outerHTML
+
+    setTimeout ( =>
+      @lastPageDom = new JSDOM(@lastPage)
+    ).bind(@), 10
+
+    @lastPage
 
 
 mobx.decorate DocsService,

@@ -22,8 +22,13 @@ observer class BadPaper extends React.Component
 
   render: ->
     { classes } = @props
-    <Paper elevation={1} className={"#{classes.root} #{@props.className}"} margin="normal">
-      <div dangerouslySetInnerHTML={{ __html: @props.content }} />
+    <Paper elevation={1} className={"#{classes.root} #{@props.className}"}  tabIndex={0} margin="normal">
+      {
+        if @props.showTemp
+          <div dangerouslySetInnerHTML={{ __html: @props.tempContent }} />
+        else
+          <div dangerouslySetInnerHTML={{ __html: @props.content }} />
+      }
     </Paper>
 
 module.exports = StyledPaper = withStyles(styles)(BadPaper)

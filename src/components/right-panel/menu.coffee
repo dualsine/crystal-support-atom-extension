@@ -17,6 +17,7 @@ observer class Menu extends React.Component
     if page != @props.store.activePage
       @props.store.removeOneError()
       @props.store.setActivePage page
+      @props.store.saveWorkspaceConfig()
 
   render: =>
     @props.store.forceRerenderers # this causes rerender on demand

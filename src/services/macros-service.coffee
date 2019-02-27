@@ -32,6 +32,9 @@ class MacrosService
     mobx.observe @store, "initialized", =>
       @process()
 
+  setActive: (bool) ->
+    @active = bool
+
   switchActive: =>
     @active = !@active
     @process()
@@ -159,3 +162,4 @@ mobx.decorate MacrosService,
 
   switchExpandEntireFile: mobx.action
   switchActive: mobx.action
+  setActive: mobx.action

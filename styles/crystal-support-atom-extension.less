@@ -18,13 +18,20 @@
 
 #crystal-support-atom-extension-terminal {
   background-color: 0,0,0;
-  background-image: radial-gradient(
-    rgba(0, 150, 90, 0.75), 0,0,0 120%
+  // background-image: radial-gradient(
+  //   rgba(0, 150, 90, 0.75), 0,0,0 120%
+  // );
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0, 0.15),
+    rgba(0,0,0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
   );
   box-shadow: 0 0 14px #28313a;
   height: 100vh;
   margin: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: auto;
   padding: 0;
   color: white;
@@ -36,36 +43,18 @@
 	  background: #0080FF;
 	  text-shadow: none;
 	}
-	pre {
+	.pre {
 	  margin: 0;
     padding: 9px 11px;
     position: relative;
     min-height: 100%;
-    overflow: hidden;
     font-size: 15px;
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0.2;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0,0,0, 0.15),
-        rgba(0,0,0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-      );
-      pointer-events: none;
-    }
+    white-space: pre;
 	}
 }
 
 #crystal-support-atom-extension-right-panel {
-	* {
+	*:not(.show-menu *) {
 		font-family: @font1;
 	}
 }
@@ -249,8 +238,19 @@
 					overflow-x: hidden;
 					overflow-y: auto;
 
+          &.concat {
+            display: flex;
+            .docs-half-menu {
+              width: 50%;
+            }
+          }
+
           * {
             font-family: @font1;
+          }
+
+          .icon::before {
+            top: -4px;
           }
 
 					& .list-item {
@@ -270,17 +270,65 @@
 					overflow-x: hidden;
 					overflow-y: auto;
 					flex: 2;
+          * {
+            font-family: @font1;
+            color: #dcdcdc;
+          }
 					& > div {
 						max-width: 100%;
 						.main-content {
 							color: #acacac;
 						}
 					}
+          .list-summary {
+            font-size: 13px;
+            .entry-summary {
+              margin-bottom: 10px;
+              a {
+                font-size: 17px;
+              }
+            }
+          }
+          .methods-inherited {
+						code {
+              display: inline-block;
+              padding: 10px 30px;
+						}
+						a {
+							display: inline-block;
+							opacity: 1;
+							color: #dcdcdc;
+							position: relative;
+							& span {
+								display: none;
+							}
+						}
+            h3 {
+              width: 100%;
+              font-size: 21px;
+              display: block;
+            }
+					}
 					.entry-detail {
 						margin-bottom: 31px;
 						& > br {
 							display: none;
 						}
+            .signature {
+              font-size: 15px;
+              strong {
+                font-size: 17px;
+                color: white;
+              }
+            }
+            .doc p {
+              font-size: 15px;
+              margin-bottom: 10px;
+              margin-top: 5px;
+            }
+            .doc pre {
+              margin-bottom: 10px;
+            }
 					}
 					.entry-const-doc {
 						pre {
@@ -296,36 +344,12 @@
 					pre > code {
 						white-space: pre;
 					}
-					.methods-inherited {
-						code {
-							clear: both;
-							float: left;
-						}
-						a {
-							display: inline-block;
-							opacity: 1;
-							color: #dcdcdc;
-							position: relative;
-							& span {
-								display: none;
-							}
-						}
-					}
 				}
 			}
 		}
   }
-	& > .compress {
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		z-index: 100;
-		line-height: 20px;
-		font-size: 12px;
-	}
-	button.refresh-api,
 	button.show-menu {
-		right: 0;
+		left: 0;
 		position: absolute;
 		z-index: 100;
 		top: -32px;

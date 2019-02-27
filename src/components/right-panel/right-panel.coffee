@@ -24,12 +24,9 @@ observer class RightPanel extends React.Component
       RightPanel.panel.hide()
       return null
 
-    loadingClass = 'loading'
-    loadingClass += ' show' if @props.store.loading
-
     <div id="crystal-support-atom-extension-right-panel" style={{width: @props.store.rightPanelWidth}} className={"panel-active-"+@props.store.active.toString()}>
       <Expander store={@props.store} />
-      <CircularProgress className={loadingClass} />
+      <CircularProgress className={"loading"} />
       <Top store={@props.store} />
       <Content store={@props.store} />
     </div>
