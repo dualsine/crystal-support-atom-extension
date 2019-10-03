@@ -1,6 +1,7 @@
 # crystal-support-atom-extension
 
 ![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+
 #### Tested with amazing website BrowserStack.com - App & Browser Testing Made Easy
 ![BrowserStack.com](https://www.browserstack.com/images/layout/browserstack-logo-600x315.png)
 
