@@ -1,11 +1,15 @@
 # crystal-support-atom-extension
 
 ![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
-
+             
+              
+                
 ![BrowserStack.com](https://www.browserstack.com/images/layout/browserstack-logo-600x315.png)
 #### Tested with amazing website BrowserStack.com - App & Browser Testing Made Easy
-We can test our plugin on twenty machines in minutes with BrowserStack.com!
-
+We can test our plugin on twenty machines with different screen resolutions in minutes with BrowserStack.com!
+          
+                
+                 
 ### To run dev version
 
 1. `npm install`
